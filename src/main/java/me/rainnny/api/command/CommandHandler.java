@@ -95,7 +95,7 @@ public class CommandHandler implements Listener {
                                 Tuple<Method, TabComplete> argumentTuple = tabComplete.get(triTuple.getLeft());
                                 if (argumentTuple != null) {
                                     WrappedMethod method = new WrappedMethod(argumentTuple.getLeft());
-                                    results.add(method.invoke(triTuple.getLeft(), new CommandProvider(player, label, args)));
+                                    results.addAll(method.invoke(triTuple.getLeft(), new CommandProvider(player, label, args)));
                                 }
                             } else results.add(triTuple.getRight().name());
                         }
