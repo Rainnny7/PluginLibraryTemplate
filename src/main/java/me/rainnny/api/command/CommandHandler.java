@@ -86,22 +86,22 @@ public class CommandHandler implements Listener {
                     System.arraycopy(splits, 1, args, 0, args.length);
                 }
                 if (args.length >= 1) {
-                    for (Tuple<Method, Command> tuple : commands.values()) {
+                    for (Map.Entry<Object, Tuple<Method, Command>> entry : commands.entrySet()) {
+                        Tuple<Method, Command> tuple = entry.getValue();
                         Command command = tuple.getRight();
                         if (!isAlias(command, label))
                             continue;
                         for (TriTuple<Object, Method, Command> triTuple : arguments.getOrDefault(command, new ArrayList<>())) {
-                            if (args.length >= 2) {
-                                Tuple<Method, TabComplete> argumentTuple = tabComplete.get(triTuple.getLeft());
-                                if (argumentTuple != null) {
-                                    WrappedMethod method = new WrappedMethod(argumentTuple.getLeft());
-                                    results.addAll(method.invoke(triTuple.getLeft(), new CommandProvider(player, label, args)));
-                                }
+                            Tuple<Method, TabComplete> tabTuple = tabComplete.get(args.length >= 2 ? triTuple.getLeft() : entry.getKey());
+                            if (tabTuple != null) {
+                                WrappedMethod method = new WrappedMethod(tabTuple.getLeft());
+                                results.addAll(method.invoke(args.length >= 2 ? triTuple.getLeft() : entry.getKey(), new CommandProvider(player, label, args)));
                             } else results.add(triTuple.getRight().name());
                         }
                     }
                 }
-                if (ProtocolVersion.getServerVersion().is(ProtocolVersion.V1_8))
+                if (ProtocolVersion.getServerVersion().isOrAbove(ProtocolVersion.V1_8)
+                        && ProtocolVersion.getServerVersion().isOrBelow(ProtocolVersion.V1_8_9))
                     ProtocolHandler.sendPacket(player, new PacketPlayOutTabComplete(results.toArray(new String[0])));
             }
         }
