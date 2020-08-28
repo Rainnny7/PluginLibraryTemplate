@@ -3,10 +3,8 @@ package me.rainnny.api;
 import lombok.Getter;
 import me.rainnny.api.command.CommandHandler;
 import me.rainnny.api.command.impl.ExampleCommand;
-import me.rainnny.api.command.impl.arguments.PingArgument;
 import me.rainnny.api.command.impl.arguments.TestArgument;
 import me.rainnny.api.hotbar.HotbarManager;
-import me.rainnny.api.hotbar.impl.ExampleHotbar;
 import me.rainnny.api.protocol.ProtocolHandler;
 import me.rainnny.api.util.MiscUtils;
 import org.bukkit.Bukkit;
@@ -50,7 +48,6 @@ public class PluginLibraryTemplate extends JavaPlugin implements Listener {
         // of the main class
         CommandHandler.addCommand(new ExampleCommand());
         CommandHandler.addArgument(ExampleCommand.class, new TestArgument());
-        CommandHandler.addArgument(ExampleCommand.class, new PingArgument());
 
         if (debugging)
             Bukkit.getLogger().info("Initializing protocol...");
@@ -59,7 +56,6 @@ public class PluginLibraryTemplate extends JavaPlugin implements Listener {
         if (debugging)
             Bukkit.getLogger().info("Initializing hotbar...");
         new HotbarManager(this);
-        HotbarManager.addHotbar(new ExampleHotbar());
 
         if (debugging)
             Bukkit.getLogger().info("Loaded " + getName() + "! Using server version: " + Bukkit.getVersion());

@@ -32,6 +32,11 @@ public class TestArgument {
     public void onCommand(CommandProvider command) {
         command.getSender().sendMessage("hi there!");
     }
+
+    @TabComplete(name = "test")
+    public List<String> onTabComplete(CommandProvider command) {
+        return Arrays.asList("test", "testing", "hello", "hi");
+    }
 }
 ```
 

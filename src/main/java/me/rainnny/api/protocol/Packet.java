@@ -14,6 +14,7 @@ public class Packet {
     @AllArgsConstructor
     public enum Client {
         FLYING("Flying"),
+        TAB_COMPLETE("TabComplete"),
         UNKNOWN("Unknown");
 
         private final String name;
@@ -34,6 +35,7 @@ public class Packet {
 
     @AllArgsConstructor
     public enum Server {
+        TAB_COMPLETE("TabComplete"),
         UNKNOWN("Unknown");
 
         private final String name;

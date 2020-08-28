@@ -1,11 +1,17 @@
 package me.rainnny.api.command;
 
 import me.rainnny.api.Options;
+import me.rainnny.api.protocol.Packet;
+import me.rainnny.api.protocol.ProtocolHandler;
+import me.rainnny.api.protocol.ProtocolVersion;
+import me.rainnny.api.protocol.event.PacketReceiveEvent;
 import me.rainnny.api.protocol.wrapped.WrappedMethod;
+import me.rainnny.api.protocol.wrapped.impl.inbound.WrappedInTabComplete;
 import me.rainnny.api.util.JsonMessage;
 import me.rainnny.api.util.Style;
 import me.rainnny.api.util.TriTuple;
 import me.rainnny.api.util.Tuple;
+import net.minecraft.server.v1_8_R3.PacketPlayOutTabComplete;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -20,7 +26,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.bukkit.Bukkit.getPluginManager;
 
@@ -30,9 +35,11 @@ import static org.bukkit.Bukkit.getPluginManager;
 public class CommandHandler implements Listener {
     /**
      * commands: Class instance, with a tuple with provider method, and command annotation
+     * tabComplete: Class instance, with a tuple with provider method, and tabComplete annotation
      * arguments: parent command annotation, with a list of tri tuples with the argument class instance, provider method, and argument annotation
      */
     private static final Map<Object, Tuple<Method, Command>> commands = new HashMap<>();
+    private static final Map<Object, Tuple<Method, TabComplete>> tabComplete = new HashMap<>();
     private static final Map<Command, List<TriTuple<Object, Method, Command>>> arguments = new HashMap<>();
 
     public CommandHandler(JavaPlugin plugin) {
@@ -55,6 +62,49 @@ public class CommandHandler implements Listener {
     private void onCommand(PlayerCommandPreprocessEvent event) {
         if (handleCommandInput(event.getPlayer(), event.getMessage()))
             event.setCancelled(true);
+    }
+
+    @EventHandler
+    private void onTab(PacketReceiveEvent event) {
+        if (event.getPacket() == Packet.Client.TAB_COMPLETE) {
+            Player player = event.getPlayer();
+            WrappedInTabComplete packet = new WrappedInTabComplete(player, event.getPacketClass());
+
+            String message = packet.getMessage();
+            if (message.startsWith("/")) {
+                event.setCancelled(true);
+
+                Set<String> results = new HashSet<>();
+
+                String label = message.substring(1);
+                String[] args = new String[0];
+
+                if (label.contains(" ")) {
+                    String[] splits = label.split(" ", -1);
+                    label = splits[0];
+                    args = new String[splits.length - 1];
+                    System.arraycopy(splits, 1, args, 0, args.length);
+                }
+                if (args.length >= 1) {
+                    for (Tuple<Method, Command> tuple : commands.values()) {
+                        Command command = tuple.getRight();
+                        if (!isAlias(command, label))
+                            continue;
+                        for (TriTuple<Object, Method, Command> triTuple : arguments.getOrDefault(command, new ArrayList<>())) {
+                            if (args.length >= 2) {
+                                Tuple<Method, TabComplete> argumentTuple = tabComplete.get(triTuple.getLeft());
+                                if (argumentTuple != null) {
+                                    WrappedMethod method = new WrappedMethod(argumentTuple.getLeft());
+                                    results.add(method.invoke(triTuple.getLeft(), new CommandProvider(player, label, args)));
+                                }
+                            } else results.add(triTuple.getRight().name());
+                        }
+                    }
+                }
+                if (ProtocolVersion.getServerVersion().is(ProtocolVersion.V1_8))
+                    ProtocolHandler.sendPacket(player, new PacketPlayOutTabComplete(results.toArray(new String[0])));
+            }
+        }
     }
 
     private boolean handleCommandInput(CommandSender sender, String input) {
@@ -171,9 +221,32 @@ public class CommandHandler implements Listener {
      * @return whether or not the provided command is the same name as the provided alias
      */
     private boolean isAlias(Command command, String alias) {
-        if (command.name().equalsIgnoreCase(alias))
+        return isAlias(command.name(), command.aliases(), alias);
+    }
+
+    /**
+     * Returns whether or not the provided tabCommand is the same name as the provided alias
+     * or has the provided alias in the provided commands alias list
+     * @param tabComplete - The tabCommand you would like to check aliases for
+     * @param alias - The alias you would like to check
+     * @return whether or not the provided tabCommand is the same name as the provided alias
+     */
+    private boolean isAlias(TabComplete tabComplete, String alias) {
+        return isAlias(tabComplete.name(), tabComplete.aliases(), alias);
+    }
+
+    /**
+     * Returns whether or not the provided command is the same name as the provided alias
+     * or has the provided alias in the provided commands alias list
+     * @param name - The name of the command
+     * @param aliases - The aliases for the command
+     * @param alias - The alias you would like to check
+     * @return whether or not the provided command is the same name as the provided alias
+     */
+    private boolean isAlias(String name, String[] aliases, String alias) {
+        if (name.equalsIgnoreCase(alias))
             return true;
-        for (String a : command.aliases()) {
+        for (String a : aliases) {
             if (a.equalsIgnoreCase(alias)) {
                 return true;
             }
@@ -203,9 +276,12 @@ public class CommandHandler implements Listener {
      * @param obj - The instance of the command
      */
     public static void addCommand(Object obj) {
-        Arrays.stream(obj.getClass().getMethods())
-                .filter(method -> method.isAnnotationPresent(Command.class))
-                .collect(Collectors.toList()).forEach(method -> commands.put(obj, new Tuple<>(method, method.getAnnotation(Command.class))));
+        for (Method method : obj.getClass().getMethods()) {
+            if (method.isAnnotationPresent(Command.class))
+                commands.put(obj, new Tuple<>(method, method.getAnnotation(Command.class)));
+            else if (method.isAnnotationPresent(TabComplete.class))
+                tabComplete.put(obj, new Tuple<>(method, method.getAnnotation(TabComplete.class)));
+        }
         if (Options.DEBUGGING.getBoolean())
             Bukkit.getLogger().info("Added command: " + obj.getClass().getSimpleName());
     }
@@ -225,9 +301,13 @@ public class CommandHandler implements Listener {
         }
         if (parent == null)
             throw new IllegalStateException("Failed to add argument '" + obj.getClass().getSimpleName() + "', the parent seems to not be registered!");
-        Method method = Arrays.stream(obj.getClass().getMethods())
-                .filter(m -> m.isAnnotationPresent(Command.class))
-                .findFirst().orElse(null);
+        Method method = null;
+        for (Method m : obj.getClass().getMethods()) {
+            if (m.isAnnotationPresent(Command.class)) {
+                method = m;
+            } else if (m.isAnnotationPresent(TabComplete.class))
+                tabComplete.put(obj, new Tuple<>(m, m.getAnnotation(TabComplete.class)));
+        }
         if (method == null)
             throw new IllegalStateException("Failed to register argument '" + obj.getClass().getSimpleName() + ", there is no method with @Command");
         Command command = method.getAnnotation(Command.class);
