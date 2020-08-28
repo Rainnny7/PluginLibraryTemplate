@@ -6,6 +6,7 @@ project in your IDE. Once you create a new project in your IDE, add the plugin l
 # Features
 * A command system
 * A protocol system (Reading and sending packets)
+* A hotbar system
 * A few utilities
 
 # Libraries
