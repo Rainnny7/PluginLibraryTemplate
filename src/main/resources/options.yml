@@ -1,0 +1,2 @@
+# Whether or not to enable debug messages in terminal
+debug: false
