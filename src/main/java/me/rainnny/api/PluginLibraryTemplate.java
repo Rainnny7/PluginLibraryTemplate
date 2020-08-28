@@ -5,6 +5,8 @@ import me.rainnny.api.command.CommandHandler;
 import me.rainnny.api.command.impl.ExampleCommand;
 import me.rainnny.api.command.impl.arguments.PingArgument;
 import me.rainnny.api.command.impl.arguments.TestArgument;
+import me.rainnny.api.hotbar.HotbarManager;
+import me.rainnny.api.hotbar.impl.ExampleHotbar;
 import me.rainnny.api.protocol.ProtocolHandler;
 import me.rainnny.api.util.MiscUtils;
 import org.bukkit.Bukkit;
@@ -53,6 +55,11 @@ public class PluginLibraryTemplate extends JavaPlugin implements Listener {
         if (debugging)
             Bukkit.getLogger().info("Initializing protocol...");
         new ProtocolHandler(this);
+
+        if (debugging)
+            Bukkit.getLogger().info("Initializing hotbar...");
+        new HotbarManager(this);
+        HotbarManager.addHotbar(new ExampleHotbar());
 
         if (debugging)
             Bukkit.getLogger().info("Loaded " + getName() + "! Using server version: " + Bukkit.getVersion());

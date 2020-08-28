@@ -8,7 +8,7 @@ import me.rainnny.api.util.Reflection;
  * @author Braydon
  * This class contains a list of Minecraft versions
  * including their respective version name and id
- * More can be found here: wiki.vg/Protocol
+ * More can be found here: https://wiki.vg/Protocol_version_numbers
  */
 @AllArgsConstructor @Getter
 public enum ProtocolVersion {

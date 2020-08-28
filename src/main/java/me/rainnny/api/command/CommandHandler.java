@@ -2,14 +2,10 @@ package me.rainnny.api.command;
 
 import me.rainnny.api.Options;
 import me.rainnny.api.protocol.wrapped.WrappedMethod;
-import me.rainnny.api.util.MiscUtils;
+import me.rainnny.api.util.JsonMessage;
 import me.rainnny.api.util.Style;
 import me.rainnny.api.util.TriTuple;
 import me.rainnny.api.util.Tuple;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -160,10 +156,10 @@ public class CommandHandler implements Listener {
             hover.add("");
             hover.add("§7§oClick to execute");
 
-            TextComponent component = new TextComponent(commandFormattedString);
-            component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(MiscUtils.arrayToString(hover)).create()));
-            component.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, commandString));
-            ((Player) sender).sendMessage(component);
+            JsonMessage json = new JsonMessage(commandFormattedString);
+            json.withHover(hover);
+            json.withClick(JsonMessage.ClickAction.SUGGEST_COMMAND, commandString);
+            json.send(sender);
         }
     }
 

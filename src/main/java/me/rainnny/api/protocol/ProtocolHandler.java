@@ -27,7 +27,7 @@ import static org.bukkit.Bukkit.getPluginManager;
  * @author Braydon
  */
 public class ProtocolHandler implements Listener {
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private static final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     public ProtocolHandler(JavaPlugin plugin) {
         for (Player player : Bukkit.getOnlinePlayers())
@@ -58,7 +58,7 @@ public class ProtocolHandler implements Listener {
      * @param player - The player you would like to send the packet to
      * @param packet - The packet you would like to send
      */
-    public void sendPacket(Player player, Object packet) {
+    public static void sendPacket(Player player, Object packet) {
         if (packet instanceof WrappedPacket)
             packet = ((WrappedPacket) packet).object;
         Object finalPacket = packet;
