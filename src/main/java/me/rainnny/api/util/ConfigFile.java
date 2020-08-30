@@ -10,8 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import static com.sun.org.apache.xml.internal.security.utils.Constants.configurationFile;
-
 /**
  * @author Braydon
  */
@@ -70,7 +68,7 @@ public class ConfigFile {
     public void saveConfig() {
         if (file.getParent() != null && configuration != null) {
             try {
-                getConfiguration().save(configurationFile);
+                getConfiguration().save(file.getParent());
             } catch (IOException ex) {
                 ex.printStackTrace();
             }

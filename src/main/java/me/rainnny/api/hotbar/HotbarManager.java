@@ -1,5 +1,7 @@
 package me.rainnny.api.hotbar;
 
+import me.rainnny.api.util.Tuple;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -20,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.bukkit.Bukkit.getPluginManager;
+import static org.bukkit.Bukkit.getScheduler;
 
 /**
  * @author Braydon
@@ -27,7 +30,10 @@ import static org.bukkit.Bukkit.getPluginManager;
 public class HotbarManager implements Listener {
     private static final List<Hotbar> hotbars = new ArrayList<>();
 
+    private final JavaPlugin plugin;
+
     public HotbarManager(JavaPlugin plugin) {
+        this.plugin = plugin;
         getPluginManager().registerEvents(this, plugin);
     }
 
@@ -37,13 +43,17 @@ public class HotbarManager implements Listener {
      * {@code GIVE_ON_JOIN}. If the hotbar has the flag
      * we give the player the hotbar
      */
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler
     private void onJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
         for (Hotbar hotbar : hotbars) {
             if (!hotbar.hasFlag(HotbarFlag.GIVE_ON_JOIN))
                 continue;
-            event.getPlayer().getInventory().clear();
-            applyHotbar(event.getPlayer(), hotbar);
+            getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                player.getInventory().clear();
+                player.getInventory().setArmorContents(null);
+                applyHotbar(player, hotbar);
+            }, 1L);
             break;
         }
     }
@@ -63,13 +73,13 @@ public class HotbarManager implements Listener {
         if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK)
             return;
         for (Hotbar hotbar : hotbars) {
-            Button button = hotbar.getButton(item).getRight();
+            Tuple<Integer, Button> button = hotbar.getButton(item);
             if (button == null)
                 continue;
-            if (button.getInteractCallback() != null) {
+            if (button.getRight().getInteractCallback() != null) {
                 event.setCancelled(true);
                 event.getPlayer().updateInventory();
-                button.getInteractCallback().run(event);
+                button.getRight().getInteractCallback().run(event);
             }
             break;
         }
@@ -88,12 +98,12 @@ public class HotbarManager implements Listener {
         if (item == null)
             return;
         for (Hotbar hotbar : hotbars) {
-            Button button = hotbar.getButton(item).getRight();
+            Tuple<Integer, Button> button = hotbar.getButton(item);
             if (button == null)
                 continue;
-            if (button.getInteractEntityEvent() != null) {
+            if (button.getRight().getInteractEntityEvent() != null) {
                 event.setCancelled(true);
-                button.getInteractEntityEvent().run(event);
+                button.getRight().getInteractEntityEvent().run(event);
             }
             break;
         }
@@ -109,7 +119,7 @@ public class HotbarManager implements Listener {
     private void onDrop(PlayerDropItemEvent event) {
         ItemStack item = event.getItemDrop().getItemStack();
         for (Hotbar hotbar : hotbars) {
-            Button button = hotbar.getButton(item).getRight();
+            Tuple<Integer, Button> button = hotbar.getButton(item);
             if (button == null)
                 continue;
             if (hotbar.hasFlag(HotbarFlag.ALLOW_DROP))
@@ -134,7 +144,7 @@ public class HotbarManager implements Listener {
         if (item == null || (item.getType() == Material.AIR))
             return;
         for (Hotbar hotbar : hotbars) {
-            Button button = hotbar.getButton(item).getRight();
+            Tuple<Integer, Button> button = hotbar.getButton(item);
             if (button == null)
                 continue;
             if (hotbar.hasFlag(HotbarFlag.ALLOW_MOVE))
@@ -150,6 +160,13 @@ public class HotbarManager implements Listener {
      */
     public static void addHotbar(Hotbar hotbar) {
         hotbars.add(hotbar);
+        if (!hotbar.hasFlag(HotbarFlag.GIVE_ON_JOIN))
+            return;
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            player.getInventory().clear();
+            player.getInventory().setArmorContents(null);
+            applyHotbar(player, hotbar);
+        }
     }
 
     /**
@@ -174,6 +191,8 @@ public class HotbarManager implements Listener {
     public static void applyHotbar(Player player, Hotbar hotbar) {
         hotbar.apply(player);
         for (Map.Entry<Integer, Button> entry : hotbar.getButtons().entrySet()) {
+            if (entry.getKey() == -1)
+                continue;
             player.getInventory().setItem(entry.getKey(), entry.getValue().getItem());
         }
         player.updateInventory();

@@ -15,7 +15,6 @@ public class TestArgument {
     @Command(name = "test", description = "I am a test!", playersOnly = true)
     public void onCommand(CommandProvider command) {
         new ExampleMenu(command.getPlayer()).open();
-        // TODO: 8/30/20 - open example menu
     }
 
     @TabComplete(name = "test")

@@ -72,8 +72,8 @@ public abstract class ScoreboardProvider {
             scoreboard = getScoreboardManager().getNewScoreboard();
         else
             scoreboard = player.getScoreboard();
-        if (scoreboard.getObjective("Board") == null)
-            objective = scoreboard.registerNewObjective("Board", "dummy");
+        if (scoreboard.getObjective("LibraryBoard") == null)
+            objective = scoreboard.registerNewObjective("LibraryBoard", "dummy");
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         objective.setDisplayName(getTitle());
 

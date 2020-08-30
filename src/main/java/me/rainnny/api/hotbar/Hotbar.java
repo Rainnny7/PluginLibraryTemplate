@@ -81,6 +81,14 @@ public abstract class Hotbar {
     }
 
     /**
+     * Add a button to the hotbar
+     * @param button - The button you would like to add
+     */
+    protected void set(Button button) {
+        set(-1, button);
+    }
+
+    /**
      * Add a button to the hotbar with a provided slot
      * @param slot - The slot you would like your button to be in
      * @param button - The button you would like to add

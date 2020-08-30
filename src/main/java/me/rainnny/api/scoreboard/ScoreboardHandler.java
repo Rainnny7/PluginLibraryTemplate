@@ -40,6 +40,8 @@ public class ScoreboardHandler implements Listener {
         this.boardClass = boardClass;
         this.delay = delay;
 
+        getPluginManager().registerEvents(this, plugin);
+
         for (Player player : Bukkit.getOnlinePlayers())
             giveBoard(player);
         (thread = new Thread("Scoreboard Thread") {
@@ -99,8 +101,6 @@ public class ScoreboardHandler implements Listener {
                 }
             }
         }).start();
-
-        getPluginManager().registerEvents(this, plugin);
     }
 
     /**
@@ -146,7 +146,8 @@ public class ScoreboardHandler implements Listener {
         if (boards.containsKey(player))
             throw new IllegalStateException("Player '" + player.getName() + "' already has the scoreboard");
         try {
-            boards.put(player, (ScoreboardProvider) boardClass.getConstructors()[0].newInstance(player));
+            ScoreboardProvider provider = (ScoreboardProvider) boardClass.getConstructors()[0].newInstance(player);
+            boards.put(player, provider);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
