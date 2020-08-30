@@ -12,16 +12,19 @@ import org.bukkit.inventory.ItemStack;
  */
 @RequiredArgsConstructor @Getter
 public class Button {
+    private final String id;
     private final ItemStack item;
     private Callback<PlayerInteractEvent> interactCallback;
     private Callback<PlayerInteractEntityEvent> interactEntityEvent;
 
     /**
      * Create a new button with an itemstack and an event
+     * @param id - The id of the button
      * @param item - The item you would like the button to be
      * @param event - The event that gets called when you click on the item
      */
-    public Button(ItemStack item, Callback<PlayerInteractEvent> event) {
+    public Button(String id, ItemStack item, Callback<PlayerInteractEvent> event) {
+        this.id = id;
         this.item = item;
         interactCallback = event;
     }

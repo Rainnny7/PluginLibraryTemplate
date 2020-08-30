@@ -5,8 +5,10 @@ import me.rainnny.api.command.CommandHandler;
 import me.rainnny.api.command.impl.ExampleCommand;
 import me.rainnny.api.command.impl.arguments.TestArgument;
 import me.rainnny.api.hotbar.HotbarManager;
+import me.rainnny.api.menu.MenuManager;
 import me.rainnny.api.protocol.ProtocolHandler;
 import me.rainnny.api.util.MiscUtils;
+import me.rainnny.api.util.VaultAttachment;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -54,8 +56,15 @@ public class PluginLibraryTemplate extends JavaPlugin implements Listener {
         new ProtocolHandler(this);
 
         if (debugging)
+            Bukkit.getLogger().info("Initializing menus...");
+        new MenuManager(this);
+
+        if (debugging)
             Bukkit.getLogger().info("Initializing hotbar...");
         new HotbarManager(this);
+
+        if (getPluginManager().isPluginEnabled("Vault"))
+            new VaultAttachment();
 
         if (debugging)
             Bukkit.getLogger().info("Loaded " + getName() + "! Using server version: " + Bukkit.getVersion());

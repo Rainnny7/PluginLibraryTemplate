@@ -2,6 +2,7 @@ package me.rainnny.api.hotbar;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import me.rainnny.api.util.Tuple;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -51,12 +52,29 @@ public abstract class Hotbar {
      * Loops through all of the buttons and checks if the provided item is the same
      * as the looped button's item
      * @param item - The item you would like to get the button for
-     * @return the button matching the provided item, null if none
+     * @return a tuple with the button's slot and the button matching the provided item, null if none
      */
-    protected Button getButton(ItemStack item) {
-        for (Button button : buttons.values()) {
-            if (button.getItem().equals(item)) {
-                return button;
+    protected Tuple<Integer, Button> getButton(ItemStack item) {
+        for (Map.Entry<Integer, Button> entry : buttons.entrySet()) {
+            Button button = entry.getValue();
+            if (button.getItem().isSimilar(item)) {
+                return new Tuple<>(entry.getKey(), entry.getValue());
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Loops through all of the buttons and checks if the provided id is the same
+     * as the looped button's id
+     * @param id - The item you would like to get the button for
+     * @return a tuple with the button's slot and the button matching the provided id, null if none
+     */
+    protected Tuple<Integer, Button> getButton(String id) {
+        for (Map.Entry<Integer, Button> entry : buttons.entrySet()) {
+            Button button = entry.getValue();
+            if (button.getId().equalsIgnoreCase(id)) {
+                return new Tuple<>(entry.getKey(), entry.getValue());
             }
         }
         return null;
@@ -69,5 +87,18 @@ public abstract class Hotbar {
      */
     protected void set(int slot, Button button) {
         buttons.put(slot, button);
+    }
+
+    /**
+     * Switch to another button in the hotbar
+     * @param player - The player you would like to switch items for
+     * @param id - The id of the button you would like to switch to
+     */
+    protected void switchTo(Player player, String id) {
+        Tuple<Integer, Button> button = getButton(id);
+        if (button == null)
+            throw new IllegalStateException("Cannot switch to button '" + id + "', it is not valid");
+        player.getInventory().setItem(button.getLeft(), button.getRight().getItem());
+        player.updateInventory();
     }
 }

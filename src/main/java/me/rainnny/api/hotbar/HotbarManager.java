@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -59,12 +60,15 @@ public class HotbarManager implements Listener {
         ItemStack item = event.getItem();
         if (item == null)
             return;
+        if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK)
+            return;
         for (Hotbar hotbar : hotbars) {
-            Button button = hotbar.getButton(item);
+            Button button = hotbar.getButton(item).getRight();
             if (button == null)
                 continue;
             if (button.getInteractCallback() != null) {
                 event.setCancelled(true);
+                event.getPlayer().updateInventory();
                 button.getInteractCallback().run(event);
             }
             break;
@@ -84,7 +88,7 @@ public class HotbarManager implements Listener {
         if (item == null)
             return;
         for (Hotbar hotbar : hotbars) {
-            Button button = hotbar.getButton(item);
+            Button button = hotbar.getButton(item).getRight();
             if (button == null)
                 continue;
             if (button.getInteractEntityEvent() != null) {
@@ -105,7 +109,7 @@ public class HotbarManager implements Listener {
     private void onDrop(PlayerDropItemEvent event) {
         ItemStack item = event.getItemDrop().getItemStack();
         for (Hotbar hotbar : hotbars) {
-            Button button = hotbar.getButton(item);
+            Button button = hotbar.getButton(item).getRight();
             if (button == null)
                 continue;
             if (hotbar.hasFlag(HotbarFlag.ALLOW_DROP))
@@ -130,7 +134,7 @@ public class HotbarManager implements Listener {
         if (item == null || (item.getType() == Material.AIR))
             return;
         for (Hotbar hotbar : hotbars) {
-            Button button = hotbar.getButton(item);
+            Button button = hotbar.getButton(item).getRight();
             if (button == null)
                 continue;
             if (hotbar.hasFlag(HotbarFlag.ALLOW_MOVE))

@@ -7,14 +7,17 @@ project in your IDE. Once you create a new project in your IDE, add the plugin l
 https://rainnny7.github.io/PluginLibraryTemplate/
 
 # Features
-* A command system
-* A protocol system (Reading and sending packets)
-* A hotbar system
+* A simplified command system
+* A Protocol library - Reading and sending packets
+* A scoreboard library - This allows you to quickly create a scoreboard
+* A menu library - This menu system allows you to have events per button
+* A hotbar library - This is used to simply create hotbar layouts, such as for a hub
 * A few utilities
 
 # Libraries
 * Paperspigot - 1.8x
 * lombok - LATEST
+* (Optional) Vault - LATEST
 
 # Examples
 
@@ -56,6 +59,55 @@ private void onClientPacket(PacketReceiveEvent event) {
 @EventHandler
 private void onServerPacket(PacketSendEvent event) {
     event.getPlayer().sendMessage("you received: " + event.getPacketClass().getClass().getSimpleName());
+}
+```
+
+**Scoreboard**
+```java
+// this = JavaPlugin
+// 3L = delay in ticks
+new ScoreboardHandler(this, ScoreboardProvider.class, 3L);
+```
+```java
+public class ExampleScoreboard extends ScoreboardProvider {
+    public ExampleScoreboard(Player player) {
+        super(player);
+    }
+
+    @Override
+    public String getTitle() {
+        return "Title Here";
+    }
+
+    @Override
+    public List<String> getLines() {
+        return Arrays.asList(
+                "I am",
+                "a scoreboard"
+        );
+    }
+}
+```
+
+**Menu**
+```java
+new ExampleMenu(player).open();
+```
+```java
+@MenuInfo(title = "A Menu!", size = 3)
+public class ExampleMenu extends Menu {
+    public ExampleMenu(Player player) {
+        super(player);
+    }
+
+    @Override
+    public void onOpen() {
+        set(0, new Button(new ItemBuilder(Material.DIRT).toItemStack()));
+
+        set(8, new Button(new ItemBuilder(Material.WOOD).toItemStack(), event -> {
+            player.sendMessage("clicked wood!");
+        }));
+    }
 }
 ```
 
