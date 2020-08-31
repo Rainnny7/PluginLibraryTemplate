@@ -102,11 +102,11 @@ public abstract class Hotbar {
      * @param player - The player you would like to switch items for
      * @param id - The id of the button you would like to switch to
      */
-    protected void switchTo(Player player, String id) {
+    protected void switchTo(Player player, int slot, String id) {
         Tuple<Integer, Button> button = getButton(id);
         if (button == null)
             throw new IllegalStateException("Cannot switch to button '" + id + "', it is not valid");
-        player.getInventory().setItem(button.getLeft(), button.getRight().getItem());
+        player.getInventory().setItem(slot, button.getRight().getItem());
         player.updateInventory();
     }
 }

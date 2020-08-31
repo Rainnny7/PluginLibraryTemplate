@@ -4,6 +4,7 @@ import lombok.Getter;
 import me.rainnny.api.command.CommandHandler;
 import me.rainnny.api.command.impl.ExampleCommand;
 import me.rainnny.api.command.impl.arguments.TestArgument;
+import me.rainnny.api.handler.BungeeHandler;
 import me.rainnny.api.hotbar.HotbarManager;
 import me.rainnny.api.menu.MenuManager;
 import me.rainnny.api.protocol.ProtocolHandler;
@@ -65,6 +66,8 @@ public class PluginLibraryTemplate extends JavaPlugin implements Listener {
 
         if (getPluginManager().isPluginEnabled("Vault"))
             new VaultAttachment();
+
+        new BungeeHandler(this);
 
         if (debugging)
             Bukkit.getLogger().info("Loaded " + getName() + "! Using server version: " + Bukkit.getVersion());

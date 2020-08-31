@@ -1,5 +1,8 @@
 package me.rainnny.api.util;
 
+import me.rainnny.api.protocol.ProtocolHandler;
+import net.minecraft.server.v1_8_R3.IChatBaseComponent;
+import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -41,5 +44,14 @@ public class PlayerUtils {
             player.getInventory().setArmorContents(null);
             player.updateInventory();
         }
+    }
+
+    /**
+     * Send the provided player an action bar with the provided text
+     * @param player - The player you would like to send the actionbar to
+     * @param text - The text you would like your actionbar to have
+     */
+    public static void displayActionbar(Player player, String text) {
+        ProtocolHandler.sendPacket(player, new PacketPlayOutChat(IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + text + "\"}"), (byte) 2));
     }
 }
