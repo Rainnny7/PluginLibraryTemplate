@@ -1,3 +1,6 @@
+[![GitHub version](https://badge.fury.io/gh/Rainnny7%2FPluginLibraryTemplate.svg)](https://badge.fury.io/gh/Rainnny7%2FPluginLibraryTemplate)
+[![HitCount](http://hits.dwyl.com/Rainnny7/PluginLibraryTemplate.svg)](http://hits.dwyl.com/Rainnny7/PluginLibraryTemplate)
+
 # How to use
 To use this plugin library, simply click on the **"Use this template"** button in the top right. Once done, open the project
 in your IDE and setup the libraries found below. To use this library with a plugin, compile the library and then make a new
