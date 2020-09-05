@@ -7,6 +7,7 @@ import me.rainnny.api.util.RollingAverageDouble;
 
 /**
  * A cleaned up version of the class from: http://github.com/funkemunky/Atlas
+ * @originalAuthor https://github.com/DeprecatedLuke
  */
 @RequiredArgsConstructor @Setter @Getter
 public class Timing {

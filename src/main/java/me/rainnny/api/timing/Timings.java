@@ -10,6 +10,7 @@ import java.util.Map;
 
 /**
  * A cleaned up version of the class from: http://github.com/funkemunky/Atlas
+ * @originalAuthor https://github.com/DeprecatedLuke
  */
 @Getter
 public class Timings {

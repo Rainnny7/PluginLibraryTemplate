@@ -83,6 +83,8 @@ public class PluginLibraryTemplate extends JavaPlugin implements Listener {
     public void onDisable() {
         instance = null;
 
+        timings = null;
+
         if (Options.DEBUGGING.getBoolean())
             Bukkit.getLogger().info("Disabling depending plugins...");
 

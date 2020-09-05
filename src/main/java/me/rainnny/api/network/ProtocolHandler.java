@@ -5,6 +5,7 @@ import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import lombok.RequiredArgsConstructor;
+import me.rainnny.api.PluginLibraryTemplate;
 import me.rainnny.api.network.event.PacketReceiveEvent;
 import me.rainnny.api.network.event.PacketSendEvent;
 import me.rainnny.api.network.wrapped.WrappedPacket;
@@ -76,9 +77,9 @@ public class ProtocolHandler implements Listener {
             Channel channel = Reflection.getChannel(player);
             if (channel == null)
                 return;
-            NettyListener listener = (NettyListener) channel.pipeline().get("custom_packet_listener");
+            PacketInterceptor listener = (PacketInterceptor) channel.pipeline().get("custom_packet_listener");
             if (listener == null) {
-                listener = new NettyListener(player);
+                listener = new PacketInterceptor(player);
                 if (channel.pipeline().get("custom_packet_listener") != null)
                     channel.pipeline().remove("custom_packet_listener");
                 channel.pipeline().addBefore("packet_handler", "custom_packet_listener", listener);
@@ -97,14 +98,16 @@ public class ProtocolHandler implements Listener {
     }
 
     @RequiredArgsConstructor
-    private static class NettyListener extends ChannelDuplexHandler {
+    private static class PacketInterceptor extends ChannelDuplexHandler {
         private final Player player;
 
         @Override
         public void channelRead(ChannelHandlerContext context, Object object) throws Exception {
             Packet.Client client = Packet.Client.of(object.getClass().getName());
             PacketReceiveEvent event = new PacketReceiveEvent(player, object, client);
+            PluginLibraryTemplate.getInstance().getTimings().start("packetReceive:" + object.getClass().getSimpleName());
             getPluginManager().callEvent(event);
+            PluginLibraryTemplate.getInstance().getTimings().stop("packetReceive:" + object.getClass().getSimpleName());
 
             if (!event.isCancelled())
                 super.channelRead(context, object);
@@ -114,7 +117,9 @@ public class ProtocolHandler implements Listener {
         public void write(ChannelHandlerContext context, Object object, ChannelPromise promise) throws Exception {
             Packet.Server server = Packet.Server.of(object.getClass().getName());
             PacketSendEvent event = new PacketSendEvent(player, object, server);
+            PluginLibraryTemplate.getInstance().getTimings().start("packetSend:" + object.getClass().getSimpleName());
             getPluginManager().callEvent(event);
+            PluginLibraryTemplate.getInstance().getTimings().stop("packetSend:" + object.getClass().getSimpleName());
 
             if (!event.isCancelled())
                 super.write(context, object, promise);
