@@ -4,7 +4,6 @@ import lombok.Getter;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
-import org.bukkit.plugin.RegisteredServiceProvider;
 
 import static org.bukkit.Bukkit.getServer;
 
@@ -16,12 +15,9 @@ public class VaultAttachment {
     @Getter private static Permission permission;
     @Getter private static Economy economy;
 
-    public VaultAttachment() {
-        RegisteredServiceProvider<Chat> chatProvider = getServer().getServicesManager().getRegistration(Chat.class);
-        RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(Permission.class);
-        RegisteredServiceProvider<Economy> ecoProvider = getServer().getServicesManager().getRegistration(Economy.class);
-        chat = chatProvider.getProvider();
-        permission = permissionProvider.getProvider();
-        economy = ecoProvider.getProvider();
+    public static void initialize() {
+        chat = getServer().getServicesManager().getRegistration(Chat.class).getProvider();
+        permission = getServer().getServicesManager().getRegistration(Permission.class).getProvider();
+        economy = getServer().getServicesManager().getRegistration(Economy.class).getProvider();
     }
 }

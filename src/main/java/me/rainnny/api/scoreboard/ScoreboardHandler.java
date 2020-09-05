@@ -1,6 +1,7 @@
 package me.rainnny.api.scoreboard;
 
 import lombok.Getter;
+import me.rainnny.api.PluginLibraryTemplate;
 import me.rainnny.api.util.Style;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -54,7 +55,7 @@ public class ScoreboardHandler implements Listener {
                         ex.printStackTrace();
                     }
                     try {
-                        sleep(delay * 50);
+                        sleep(delay * 50L);
                     } catch (InterruptedException ex) {
                         ex.printStackTrace();
                     }
@@ -62,6 +63,7 @@ public class ScoreboardHandler implements Listener {
             }
 
             private void tick() {
+                PluginLibraryTemplate.getInstance().getTimings().start("scoreboardHandler");
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     ScoreboardProvider provider = boards.get(player);
                     if (provider == null)
@@ -99,6 +101,7 @@ public class ScoreboardHandler implements Listener {
                         }
                     }
                 }
+                PluginLibraryTemplate.getInstance().getTimings().stop("scoreboardHandler");
             }
         }).start();
     }

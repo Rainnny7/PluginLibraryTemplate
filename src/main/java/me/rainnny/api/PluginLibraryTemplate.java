@@ -8,6 +8,7 @@ import me.rainnny.api.handler.BungeeHandler;
 import me.rainnny.api.hotbar.HotbarManager;
 import me.rainnny.api.menu.MenuManager;
 import me.rainnny.api.network.ProtocolHandler;
+import me.rainnny.api.timing.Timings;
 import me.rainnny.api.util.MiscUtils;
 import me.rainnny.api.util.VaultAttachment;
 import org.bukkit.Bukkit;
@@ -30,6 +31,7 @@ import static org.bukkit.Bukkit.getPluginManager;
 public class PluginLibraryTemplate extends JavaPlugin implements Listener {
     @Getter private static PluginLibraryTemplate instance;
 
+    private Timings timings;
     private final List<Plugin> hookedPlugins = new ArrayList<>();
 
     @Override
@@ -40,6 +42,8 @@ public class PluginLibraryTemplate extends JavaPlugin implements Listener {
 
         if (debugging)
             Bukkit.getLogger().info("Setting up " + getName() + " v" + getDescription().getVersion() + "...");
+
+        timings = new Timings();
 
         if (debugging)
             Bukkit.getLogger().info("Initializing commands...");
@@ -65,7 +69,7 @@ public class PluginLibraryTemplate extends JavaPlugin implements Listener {
         new HotbarManager(this);
 
         if (getPluginManager().isPluginEnabled("Vault"))
-            new VaultAttachment();
+            VaultAttachment.initialize();
 
         new BungeeHandler(this);
 

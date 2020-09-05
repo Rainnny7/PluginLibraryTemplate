@@ -1,6 +1,7 @@
 package me.rainnny.api.command;
 
 import me.rainnny.api.Options;
+import me.rainnny.api.PluginLibraryTemplate;
 import me.rainnny.api.network.Packet;
 import me.rainnny.api.network.ProtocolHandler;
 import me.rainnny.api.network.ProtocolVersion;
@@ -171,7 +172,9 @@ public class CommandHandler implements Listener {
                 sender.sendMessage("§cThere was a problem whilst executing the command! §fUnknown class or method");
                 return;
             }
+            PluginLibraryTemplate.getInstance().getTimings().start("command:" + command.name());
             new WrappedMethod(tuple.getRight()).invoke(tuple.getLeft(), new CommandProvider(sender, label, args));
+            PluginLibraryTemplate.getInstance().getTimings().stop("command:" + command.name());
         }
     }
 

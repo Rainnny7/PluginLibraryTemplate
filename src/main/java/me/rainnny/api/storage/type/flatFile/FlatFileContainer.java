@@ -1,5 +1,6 @@
 package me.rainnny.api.storage.type.flatFile;
 
+import me.rainnny.api.PluginLibraryTemplate;
 import me.rainnny.api.network.wrapped.WrappedClass;
 import me.rainnny.api.storage.StorageContainer;
 import me.rainnny.api.storage.StorageElement;
@@ -67,6 +68,7 @@ public class FlatFileContainer<E> extends StorageContainer<E> {
         ConfigurationSection section = configuration.getConfigurationSection(sectionName);
         if (section == null)
             throw new IllegalArgumentException("Section with name '" + sectionName + "' was not found");
+        PluginLibraryTemplate.getInstance().getTimings().start("flatFileContainer:load:" + file.getFileName());
         for (String key : section.getKeys(false)) {
             if (token == null)
                 add(key, (E) configuration.get(sectionName + "." + key));
@@ -90,6 +92,7 @@ public class FlatFileContainer<E> extends StorageContainer<E> {
                 }
             }
         }
+        PluginLibraryTemplate.getInstance().getTimings().stop("flatFileContainer:load:" + file.getFileName());
     }
 
     /**
@@ -104,6 +107,7 @@ public class FlatFileContainer<E> extends StorageContainer<E> {
         ConfigurationSection section = configuration.getConfigurationSection(sectionName);
         if (section == null)
             throw new IllegalArgumentException("Section with name '" + sectionName + "' was not found");
+        PluginLibraryTemplate.getInstance().getTimings().start("flatFileContainer:save:" + file.getFileName());
         for (StorageElement element : getElements()) {
             if (token == null)
                 configuration.set(sectionName + "." + element.getKey(), element.getValue());
@@ -118,5 +122,6 @@ public class FlatFileContainer<E> extends StorageContainer<E> {
             }
         }
         file.saveConfig();
+        PluginLibraryTemplate.getInstance().getTimings().stop("flatFileContainer:save:" + file.getFileName());
     }
 }
