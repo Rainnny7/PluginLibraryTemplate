@@ -100,6 +100,7 @@ public abstract class Hotbar {
     /**
      * Switch to another button in the hotbar
      * @param player - The player you would like to switch items for
+     * @param slot - The slot of the item you would like to switch to
      * @param id - The id of the button you would like to switch to
      */
     protected void switchTo(Player player, int slot, String id) {

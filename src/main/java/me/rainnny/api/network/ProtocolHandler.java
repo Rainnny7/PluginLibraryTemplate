@@ -1,13 +1,13 @@
-package me.rainnny.api.protocol;
+package me.rainnny.api.network;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import lombok.RequiredArgsConstructor;
-import me.rainnny.api.protocol.event.PacketReceiveEvent;
-import me.rainnny.api.protocol.event.PacketSendEvent;
-import me.rainnny.api.protocol.wrapped.WrappedPacket;
+import me.rainnny.api.network.event.PacketReceiveEvent;
+import me.rainnny.api.network.event.PacketSendEvent;
+import me.rainnny.api.network.wrapped.WrappedPacket;
 import me.rainnny.api.util.Reflection;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

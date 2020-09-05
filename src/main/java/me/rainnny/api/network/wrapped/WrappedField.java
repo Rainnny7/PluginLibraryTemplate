@@ -1,4 +1,4 @@
-package me.rainnny.api.protocol.wrapped;
+package me.rainnny.api.network.wrapped;
 
 import lombok.Getter;
 import lombok.SneakyThrows;

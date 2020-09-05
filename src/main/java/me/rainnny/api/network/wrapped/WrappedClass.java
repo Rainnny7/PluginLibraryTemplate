@@ -1,9 +1,9 @@
-package me.rainnny.api.protocol.wrapped;
+package me.rainnny.api.network.wrapped;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import me.rainnny.api.protocol.Packet;
+import me.rainnny.api.network.Packet;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

@@ -1,4 +1,4 @@
-package me.rainnny.api.protocol;
+package me.rainnny.api.network;
 
 import lombok.AllArgsConstructor;
 import me.rainnny.api.util.Reflection;

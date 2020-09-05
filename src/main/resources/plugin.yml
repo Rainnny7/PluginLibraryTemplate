@@ -1,6 +1,6 @@
 name: PluginLibraryTemplate
 main: me.rainnny.api.PluginLibraryTemplate
-version: 1.0.7
+version: 1.0.8
 author: Braydon
 softdepend:
   - Vault

@@ -1,10 +1,10 @@
-package me.rainnny.api.protocol.wrapped.impl.inbound;
+package me.rainnny.api.network.wrapped.impl.inbound;
 
 import lombok.Getter;
-import me.rainnny.api.protocol.Packet;
-import me.rainnny.api.protocol.wrapped.WrappedClass;
-import me.rainnny.api.protocol.wrapped.WrappedField;
-import me.rainnny.api.protocol.wrapped.WrappedPacket;
+import me.rainnny.api.network.Packet;
+import me.rainnny.api.network.wrapped.WrappedClass;
+import me.rainnny.api.network.wrapped.WrappedField;
+import me.rainnny.api.network.wrapped.WrappedPacket;
 import org.bukkit.entity.Player;
 
 /**

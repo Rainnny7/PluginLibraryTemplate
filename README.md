@@ -12,6 +12,7 @@ https://rainnny7.github.io/PluginLibraryTemplate/
 # Features
 * A simplified command system
 * A Protocol library - Reading and sending packets
+* An easy to use storage solution - This makes it easier to load and save data
 * A scoreboard library - This allows you to quickly create a scoreboard
 * A menu library - This menu system allows you to have events per button
 * A hotbar library - This is used to simply create hotbar layouts, such as for a hub
@@ -62,6 +63,73 @@ private void onClientPacket(PacketReceiveEvent event) {
 @EventHandler
 private void onServerPacket(PacketSendEvent event) {
     event.getPlayer().sendMessage("you received: " + event.getPacketClass().getClass().getSimpleName());
+}
+```
+
+**Storage**
+```yaml
+# File Example
+players:
+  fc1d5fe7-f29b-430d-80bb-3b093a638b0f:
+    name: Rainnny
+    rank: OWNER
+```
+```java
+// Loading
+ConfigFile file = new ConfigFile(plugin, "players.yml");
+FlatFileContainer<Account> container = new FlatFileContainer<>(file, Account.class);
+
+container.load("players");
+
+for (Account account : container.getValues()) {
+    System.out.println("account = " + account.toString());
+}
+```
+```java
+// Saving (random UUIDs were used for an example)
+ConfigFile file = new ConfigFile(plugin, "players.yml");
+FlatFileContainer<Account> container = new FlatFileContainer<>(file, Account.class);
+
+UUID uuid = UUID.randomUUID();
+container.add(uuid.toString(), new Account(uuid, "Rainnny", "DEFAULT"));
+container.save("players");
+```
+```java
+@NoArgsConstructor @AllArgsConstructor @Getter
+public class Account implements FlatFileToken {
+    private UUID uuid;
+    private String name, rank;
+
+    @Override
+    public List<String> getKeys() {
+        return Arrays.asList("name", "rank");
+    }
+
+    @Override
+    public Object load(String key, FlatFileEntries entries) {
+        return new Account(
+                UUID.fromString(key),
+                String.valueOf(entries.of("name")),
+                String.valueOf(entries.of("rank"))
+        );
+    }
+
+    @Override
+    public FlatFileEntries save() {
+        return new FlatFileEntries(Arrays.asList(
+                new Tuple<>("name", name),
+                new Tuple<>("rank", rank)
+        ));
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "uuid=" + uuid.toString() +
+                ", name='" + name + '\'' +
+                ", rank='" + rank + '\'' +
+                '}';
+    }
 }
 ```
 

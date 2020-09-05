@@ -1,12 +1,12 @@
 package me.rainnny.api.command;
 
 import me.rainnny.api.Options;
-import me.rainnny.api.protocol.Packet;
-import me.rainnny.api.protocol.ProtocolHandler;
-import me.rainnny.api.protocol.ProtocolVersion;
-import me.rainnny.api.protocol.event.PacketReceiveEvent;
-import me.rainnny.api.protocol.wrapped.WrappedMethod;
-import me.rainnny.api.protocol.wrapped.impl.inbound.WrappedInTabComplete;
+import me.rainnny.api.network.Packet;
+import me.rainnny.api.network.ProtocolHandler;
+import me.rainnny.api.network.ProtocolVersion;
+import me.rainnny.api.network.event.PacketReceiveEvent;
+import me.rainnny.api.network.wrapped.WrappedMethod;
+import me.rainnny.api.network.wrapped.impl.inbound.WrappedInTabComplete;
 import me.rainnny.api.util.JsonMessage;
 import me.rainnny.api.util.Style;
 import me.rainnny.api.util.TriTuple;

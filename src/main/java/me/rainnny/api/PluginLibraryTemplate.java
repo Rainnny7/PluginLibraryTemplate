@@ -7,7 +7,7 @@ import me.rainnny.api.command.impl.arguments.TestArgument;
 import me.rainnny.api.handler.BungeeHandler;
 import me.rainnny.api.hotbar.HotbarManager;
 import me.rainnny.api.menu.MenuManager;
-import me.rainnny.api.protocol.ProtocolHandler;
+import me.rainnny.api.network.ProtocolHandler;
 import me.rainnny.api.util.MiscUtils;
 import me.rainnny.api.util.VaultAttachment;
 import org.bukkit.Bukkit;

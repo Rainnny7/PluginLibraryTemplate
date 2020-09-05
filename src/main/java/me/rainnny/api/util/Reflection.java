@@ -1,9 +1,9 @@
 package me.rainnny.api.util;
 
 import lombok.Getter;
-import me.rainnny.api.protocol.wrapped.WrappedClass;
-import me.rainnny.api.protocol.wrapped.WrappedField;
-import me.rainnny.api.protocol.wrapped.WrappedMethod;
+import me.rainnny.api.network.wrapped.WrappedClass;
+import me.rainnny.api.network.wrapped.WrappedField;
+import me.rainnny.api.network.wrapped.WrappedMethod;
 import org.bukkit.entity.Player;
 
 import static org.bukkit.Bukkit.getServer;
