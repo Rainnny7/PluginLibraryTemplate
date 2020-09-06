@@ -19,8 +19,9 @@ https://rainnny7.github.io/PluginLibraryTemplate/
 
 # Libraries
 * Paperspigot - 1.8x
-* lombok - LATEST
+* lombok - 1.18.0
 * (Optional) Vault - LATEST
+* gson - LATEST
 
 # Examples
 
