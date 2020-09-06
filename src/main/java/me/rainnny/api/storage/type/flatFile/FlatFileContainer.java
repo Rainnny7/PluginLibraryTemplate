@@ -101,14 +101,20 @@ public class FlatFileContainer<E> extends StorageContainer<E> {
      * is null, we save the element key and it's value to the path
      * "sectionName.elementKey.elementValue"
      * @param sectionName - The name of the section you would like to save the container under
+     * @param specificElement - The specific element you would like to save, null if you wanna
+     *                          save all elements
      */
-    public void save(String sectionName) {
+    public void save(String sectionName, @Nullable StorageElement specificElement) {
         FileConfiguration configuration = file.getConfiguration();
         ConfigurationSection section = configuration.getConfigurationSection(sectionName);
         if (section == null)
             throw new IllegalArgumentException("Section with name '" + sectionName + "' was not found");
         PluginLibraryTemplate.getInstance().getTimings().start("flatFileContainer:save:" + file.getFileName());
-        for (StorageElement element : getElements()) {
+        List<StorageElement> elements = new ArrayList<>();
+        if (specificElement == null)
+            elements.addAll(getElements());
+        else elements.add(specificElement);
+        for (StorageElement element : elements) {
             if (token == null)
                 configuration.set(sectionName + "." + element.getKey(), element.getValue());
             else {
